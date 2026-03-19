@@ -26,7 +26,8 @@ try {
     res.json({ success: true, content: text });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.log('GEMINI ERROR:', error.message);
+    res.status(500).json({error: error.message});
   }
 });
 

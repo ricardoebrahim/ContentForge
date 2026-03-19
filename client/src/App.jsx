@@ -1,121 +1,137 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [topic, setTopic] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState(null)
+  const [error, setError] = useState(null)
+  const [copied, setCopied] = useState('')
+
+  const handleGenerate = async () => {
+    if (!topic.trim()) return
+    setLoading(true)
+    setError(null)
+    setResult(null)
+
+    try {
+      const response = await fetch('http://localhost:5000/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic })
+      })
+      const data = await response.json()
+      if (data.success) {
+        setResult(data.content)
+      } else {
+        setError(data.error)
+      }
+    } catch (err) {
+      setError('Failed to connect to server')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCopy = (text, label) => {
+    navigator.clipboard.writeText(text)
+    setCopied(label)
+    setTimeout(() => setCopied(''), 2000)
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="min-h-screen bg-dark font-inter">
+      {/* Header */}
+      <header className="border-b border-border py-6 px-8">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">
+              Content<span className="text-primary">Forge</span>
+            </h1>
+            <p className="text-text-secondary text-sm mt-1">
+              AI-powered content generation
+            </p>
+          </div>
+          <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+      </header>
+
+      {/* Main */}
+      <main className="max-w-4xl mx-auto px-8 py-16">
+        {/* Input Section */}
+        <div className="text-center mb-16">
+          <h2 className="text-5xl font-bold text-white mb-4">
+            Generate content
+            <span className="text-primary"> instantly</span>
+          </h2>
+          <p className="text-text-secondary text-lg mb-12">
+            Enter a topic and get a summary, social post, and SEO copy in seconds.
           </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <div className="flex gap-4 max-w-2xl mx-auto">
+            <input
+              type="text"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
+              placeholder="Enter a topic..."
+              className="flex-1 bg-surface border border-border rounded-xl px-6 py-4 
+                text-white placeholder-text-secondary outline-none
+                focus:border-primary transition-all duration-300
+                focus:shadow-glow"
+            />
+            <button
+              onClick={handleGenerate}
+              disabled={loading}
+              className="bg-primary hover:bg-primary-light text-white font-semibold
+                px-8 py-4 rounded-xl transition-all duration-300
+                hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Generating...' : 'Generate'}
+            </button>
+          </div>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        {/* Error */}
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-8 text-red-400 text-center">
+            {error}
+          </div>
+        )}
+
+        {/* Results */}
+        {result && (
+          <div className="grid gap-6">
+            {[
+              { label: 'Summary', key: 'summary' },
+              { label: 'Social Post', key: 'social' },
+              { label: 'SEO Description', key: 'seo' },
+            ].map(({ label }) => (
+              <div
+                key={label}
+                className="bg-surface border border-border rounded-2xl p-6
+                  hover:border-primary/50 transition-all duration-300"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+                    {label}
+                  </span>
+                  <button
+                    onClick={() => handleCopy(result, label)}
+                    className="text-text-secondary hover:text-white text-sm
+                      transition-colors duration-200"
+                  >
+                    {copied === label ? '✓ Copied' : 'Copy'}
+                  </button>
+                </div>
+                <p className="text-text-secondary leading-relaxed">
+                  {result}
+                </p>
+              </div>
+            ))}
+            </div>
+        )}
+        </main>
+        </div>
   )
 }
-
 export default App
