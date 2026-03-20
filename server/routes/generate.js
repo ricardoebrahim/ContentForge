@@ -14,11 +14,18 @@ return res.status(400).json({ error: 'Topic is required'});
 try {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-    const prompt = `You are a content creation assistant. Given the topic: "${topic}", generate:
-    1. SUMMARY: A 3-sentence summary
-    2. SOCIAL POST: A short engaging social media post with hashtags
-    3. SEO DESCRIPTION: A 150-word SEO-optimized description
-    Format your response with clear labels for each section.`;
+    const prompt = `You are a content assistant. Generate content for the topic: "${topic}".
+
+    Respond in this EXACT format with these EXACT labels and nothing else before or after:
+
+    SUMMARY:
+    Write exactly 3 sentences summarizing the topic.
+
+    SOCIAL_POST:
+    Write on engaging social media post with relevant hashtags.
+
+    SEO_DESCRIPTION:
+     Write a 150-word SEO-optimizied description.`;
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();

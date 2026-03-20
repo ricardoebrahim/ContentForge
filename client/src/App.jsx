@@ -7,6 +7,18 @@ function App() {
   const [error, setError] = useState(null)
   const [copied, setCopied] = useState('')
 
+  const parseContent = (text) => {
+const summaryMatch = text.match(/SUMMARY:\n([\s\S]*?)(?=SOCIAL_POST:|$)/);
+const socialMatch = text.match(/SOCIAL_POST:\n([\s\S]*?)(?=SEO_DESCRIPTION:|$)/);
+const seoMatch = text.match(/SEO_DESCRIPTION:\n([\s\S]*?)$/);
+
+return{
+  summary: summaryMatch ? summaryMatch[1].trim() : '',
+  social: socialMatch ? socialMatch[1].trim() : '',
+  seo: seoMatch ? seoMatch[1].trim() : ''
+};
+  };
+  
   const handleGenerate = async () => {
     if (!topic.trim()) return
     setLoading(true)
@@ -21,7 +33,7 @@ function App() {
       })
       const data = await response.json()
       if (data.success) {
-        setResult(data.content)
+        setResult(parseContent(data.content))
       } else {
         setError(data.error)
       }
@@ -100,38 +112,41 @@ function App() {
 
         {/* Results */}
         {result && (
-          <div className="grid gap-6">
-            {[
-              { label: 'Summary', key: 'summary' },
-              { label: 'Social Post', key: 'social' },
-              { label: 'SEO Description', key: 'seo' },
-            ].map(({ label }) => (
-              <div
-                key={label}
-                className="bg-surface border border-border rounded-2xl p-6
-                  hover:border-primary/50 transition-all duration-300"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-primary font-semibold text-sm uppercase tracking-wider">
-                    {label}
-                  </span>
-                  <button
-                    onClick={() => handleCopy(result, label)}
-                    className="text-text-secondary hover:text-white text-sm
-                      transition-colors duration-200"
-                  >
-                    {copied === label ? '✓ Copied' : 'Copy'}
-                  </button>
-                </div>
-                <p className="text-text-secondary leading-relaxed">
-                  {result}
-                </p>
-              </div>
-            ))}
-            </div>
-        )}
-        </main>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+    {[
+      { label: 'Summary', key: 'summary', icon: '📝' },
+      { label: 'Social Post', key: 'social', icon: '📱' },
+      { label: 'SEO Description', key: 'seo', icon: '🔍' },
+    ].map(({ label, key, icon }) => (
+      <div
+        key={label}
+        className="bg-surface border border-border rounded-2xl p-6
+          hover:border-primary/50 transition-all duration-300"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span>{icon}</span>
+            <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+              {label}
+            </span>
+          </div>
+          <button
+            onClick={() => handleCopy(result[key], label)}
+            className="text-text-secondary hover:text-white text-sm
+              transition-colors duration-200"
+          >
+            {copied === label ? '✓ Copied' : 'Copy'}
+          </button>
         </div>
+        <p className="text-text-secondary leading-relaxed text-sm">
+          {result[key]}
+        </p>
+      </div>
+    ))}
+  </div>
+)}
+</main>
+</div>
   )
 }
 export default App
