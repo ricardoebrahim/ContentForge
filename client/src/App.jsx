@@ -284,10 +284,11 @@ function App() {
               <div className="space-y-2">
                 {history.map((item) => (
                   <div
-                    key={item._id}
-                    className="group bg-surface border border-border rounded-xl p-3
-                      hover:border-primary/30 transition-all duration-300"
-                  >
+  key={item._id}
+  onClick={() => setResult({ summary: item.summary, social: item.social, seo: item.seo })}
+  className="group bg-surface border border-border rounded-xl p-3
+    hover:border-primary/30 transition-all duration-300 cursor-pointer"
+>
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-white text-sm font-medium capitalize leading-tight">
                         {item.topic}
