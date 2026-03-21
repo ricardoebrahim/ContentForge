@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 const generateRoute = require('./routes/generate');
 const authRoute = require('./routes/auth');
+const historyRoute = require('./routes/history');
 
 
 const app = express();
@@ -21,6 +22,7 @@ app.get('/', (req, res) => {
 // Connect to MongoDB and start server
 app.use('/api/generate', generateRoute);
 app.use('/api/auth', authRoute);
+app.use('/api/history', historyRoute);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
