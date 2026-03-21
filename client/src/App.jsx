@@ -396,9 +396,8 @@ function App() {
                 ].map(({ label, key, icon }) => (
                   <div
                     key={label}
-                    className={`bg-surface border border-border rounded-2xl p-6
-                      hover:border-primary/50 transition-all duration-300 fade-in-up card-3d ${copied === label ? 'border-flash' :""}
-                      `}
+                    className="bg-surface border border-border rounded-2xl p-6
+  hover:border-primary/50 transition-all duration-300 fade-in-up card-3d"
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
