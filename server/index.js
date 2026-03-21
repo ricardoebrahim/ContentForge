@@ -25,6 +25,7 @@ app.get('/', (req, res) => {
 // Connect to MongoDB and start server
 app.use('/api/generate', generateRoute);
 app.use('/api/auth', authRoute);
+console.log('Auth route registered');
 app.use('/api/history', historyRoute);
 
 mongoose.connect(process.env.MONGO_URI)
