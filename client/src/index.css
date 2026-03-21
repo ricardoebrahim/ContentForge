@@ -44,7 +44,8 @@ body {
 }
 
 .fade-in-up {
-  animation: fadeInUp 0.4s ease forwards;
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
 }
 
 @keyframes toast-in {
@@ -57,12 +58,12 @@ body {
 }
 
 .card-3d {
-  transform-style: preserve-3d;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card-3d:hover {
-  transform: perspective(1000px) rotateX(3deg) rotateY(3deg) scale(1.02);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
 }
 
 @keyframes border-wave {
