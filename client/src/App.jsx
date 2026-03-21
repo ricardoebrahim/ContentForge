@@ -84,7 +84,7 @@ function App() {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch(`https://contentforge-production-cd34.up.railway.app/api/history', {
+      const response = await fetch('https://contentforge-production-cd34.up.railway.app/api/history', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       const data = await response.json()
