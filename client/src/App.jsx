@@ -6,7 +6,7 @@ function App() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
   const [copied, setCopied] = useState('')
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null)
 const [token, setToken] = useState(localStorage.getItem('token') || '')
 const [authMode, setAuthMode] = useState('signin')
 const [authData, setAuthData] = useState({ name: '', email: '', password: '' })
@@ -17,6 +17,7 @@ const [authLoading, setAuthLoading] = useState(false)
 const fullText = 'Generate content instantly '
 
 useEffect(() => {
+  setDisplayText('')
   let i = 0
   const timer = setInterval(() => {
     if (i < fullText.length) {
@@ -27,7 +28,7 @@ useEffect(() => {
     }
   }, 60)
   return () => clearInterval(timer)
-}, [])
+}, [token])
 
  const parseContent = (text) => {
   const clean = (str) => str ? str.replace(/\*\*/g, '').trim() : '';
@@ -58,6 +59,7 @@ const handleAuth = async () => {
     
     if (data.success) {
       localStorage.setItem('token', data.token)
+      localStorage.setItem('user', JSON.stringify(data.user))
       setToken(data.token)
       setUser(data.user)
     } else {
@@ -72,6 +74,7 @@ const handleAuth = async () => {
 
 const handleLogout = () => {
   localStorage.removeItem('token')
+  localStorage.removeItem('user')
   setToken('')
   setUser(null)
   setResult(null)
@@ -124,7 +127,24 @@ const handleLogout = () => {
               AI-powered content generation
             </p>
           </div>
-          <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+          <div className="flex items-center gap-4">
+  {token && user && (
+    <>
+      <span className="text-text-secondary text-sm">
+        Welcome, <span className="text-white font-medium">{user.name}</span>
+      </span>
+      <button
+        onClick={handleLogout}
+        className="text-text-secondary hover:text-white text-sm
+          border border-border hover:border-primary/50 px-4 py-2 
+          rounded-lg transition-all duration-300"
+      >
+        Sign out
+      </button>
+    </>
+  )}
+  <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+</div>
         </div>
       </header>
 
