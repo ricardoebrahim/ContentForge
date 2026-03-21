@@ -15,6 +15,7 @@ function App() {
   const [showPassword, setShowPassword] = useState(false)
   const [history, setHistory] = useState([])
   const [displayText, setDisplayText] = useState('')
+  const {toast, setToast} = useState('')
   const fullText = 'Generate content instantly '
 
   useEffect(() => {
@@ -151,11 +152,23 @@ function App() {
   const handleCopy = (text, label) => {
     navigator.clipboard.writeText(text)
     setCopied(label)
-    setTimeout(() => setCopied(''), 2000)
+    setToast(`${label} copied!`)
+    setTimeout(() => {
+      setCopied('')
+      setToast('')
+     }, 2000)
   }
 
   return (
     <div className="min-h-screen bg-dark font-inter flex flex-col">
+
+{/* Toast */}
+{toast && (
+  <div className="toast fixed bottom-6 right-6 bg-primary text-white px-6 py-3 rounded-xl shadow-glow z-50 text-sm font-medium">
+    ✓ {toast}
+  </div>
+)}
+
       {/* Header */}
       <header className=" py-6 px-8">
         <div className="max-w-full mx-auto flex items-center justify-between">
@@ -382,8 +395,9 @@ function App() {
                 ].map(({ label, key, icon }) => (
                   <div
                     key={label}
-                    className="bg-surface border border-border rounded-2xl p-6
-                      hover:border-primary/50 transition-all duration-300"
+                    className={`bg-surface border border-border rounded-2xl p-6
+                      hover:border-primary/50 transition-all duration-300 fade-in-up card-3d ${copied === label ? 'border-flash' :""}
+                      `}
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
