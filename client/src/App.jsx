@@ -52,7 +52,7 @@ function App() {
     setAuthError('')
     try {
       const endpoint = authMode === 'signup' ? '/api/auth/signup' : '/api/auth/signin'
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const response = await fetch(`contentforge-production-cd34.up.railway.app${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(authData)
@@ -84,7 +84,7 @@ function App() {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/history', {
+      const response = await fetch('contentforge-production-cd34.up.railway.app/api/history', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       const data = await response.json()
@@ -96,7 +96,7 @@ function App() {
 
   const deleteHistory = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/history/${id}`, {
+      await fetch(`contentforge-production-cd34.up.railway.app/api/history/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       })
@@ -112,7 +112,7 @@ function App() {
     setError(null)
     setResult(null)
     try {
-      const response = await fetch('http://localhost:5000/api/generate', {
+      const response = await fetch('contentforge-production-cd34.up.railway.app/api/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ function App() {
       if (data.success) {
         const parsed = parseContent(data.content)
         setResult(parsed)
-        await fetch('http://localhost:5000/api/history', {
+        await fetch('contentforge-production-cd34.up.railway.app/api/history', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
