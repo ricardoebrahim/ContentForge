@@ -1,16 +1,42 @@
-# React + Vite
+# ContentForge
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AI-powered content generation tool. Input a topic — get a summary, social media post, and SEO description in seconds.
 
-Currently, two official plugins are available:
+🔗 **Live Demo:** https://contentforge-ash.netlify.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- AI content generation powered by Google Gemini
+- Three outputs: Summary, Social Post, SEO Description
+- User authentication with JWT
+- Generation history with sidebar
+- Dark premium UI with animations
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **Frontend:** React.js, Vite, Tailwind CSS
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB, Mongoose
+- **AI:** Google Gemini API
+- **Auth:** JWT
+- **Deployment:** Netlify (frontend) + Railway (backend)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting Started
+
+Clone the repo and install dependencies:
+
+```bash
+git clone https://github.com/ricardoebrahim/contentforge.git
+cd server && npm install
+cd ../client && npm install
+Create server/.env:
+PORT=5000
+MONGO_URI=your_mongodb_uri
+GEMINI_API_KEY=your_gemini_key
+JWT_SECRET=your_jwt_secret
+Run development servers:
+cd server && npm run dev
+cd client && npm run dev
+Author
+Ash Ibrahim — Full Stack Developer & AI Automation Engineer
+LinkedIn | GitHub
