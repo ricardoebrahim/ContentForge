@@ -160,7 +160,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-dark font-inter flex flex-col">
+    <div className="min-h-screen font-inter flex flex-col">
 
 {/* Toast */}
 {toast && (
