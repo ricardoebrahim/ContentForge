@@ -1,10 +1,11 @@
 const express = require('express');
+const auth = require('../middleware/auth');
 const router = express.Router();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-router.post('/', async (req , res) => {
+router.post('/', auth, async (req , res) => {
 const { topic } = req.body;
 
 if (!topic) {

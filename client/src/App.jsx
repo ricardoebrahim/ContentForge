@@ -6,6 +6,13 @@ function App() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
   const [copied, setCopied] = useState('')
+  const [user, setUser] = useState(null)
+const [token, setToken] = useState(localStorage.getItem('token') || '')
+const [authMode, setAuthMode] = useState('signin')
+const [authData, setAuthData] = useState({ name: '', email: '', password: '' })
+const [showPassword, setShowPassword] = useState(false)
+const [authError, setAuthError] = useState('')
+const [authLoading, setAuthLoading] = useState(false)
   const [displayText, setDisplayText] = useState('')
 const fullText = 'Generate content instantly '
 
@@ -36,6 +43,40 @@ useEffect(() => {
   };
 };
   
+const handleAuth = async () => {
+  setAuthLoading(true)
+  setAuthError('')
+  
+  try {
+    const endpoint = authMode === 'signup' ? '/api/auth/signup' : '/api/auth/signin'
+    const response = await fetch(`http://localhost:5000${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(authData)
+    })
+    const data = await response.json()
+    
+    if (data.success) {
+      localStorage.setItem('token', data.token)
+      setToken(data.token)
+      setUser(data.user)
+    } else {
+      setAuthError(data.error)
+    }
+  } catch (err) {
+    setAuthError('Connection failed')
+  } finally {
+    setAuthLoading(false)
+  }
+}
+
+const handleLogout = () => {
+  localStorage.removeItem('token')
+  setToken('')
+  setUser(null)
+  setResult(null)
+}
+
   const handleGenerate = async () => {
     if (!topic.trim()) return
     setLoading(true)
@@ -44,10 +85,13 @@ useEffect(() => {
 
     try {
       const response = await fetch('http://localhost:5000/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic })
-      })
+  method: 'POST',
+  headers: { 
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  },
+  body: JSON.stringify({ topic })
+})
       const data = await response.json()
       if (data.success) {
         setResult(parseContent(data.content))
@@ -86,6 +130,87 @@ useEffect(() => {
 
       {/* Main */}
       <main className="max-w-4xl mx-auto px-8 py-16">
+
+{/* Auth Gate */}
+{!token ? (
+  <div className="max-w-md mx-auto">
+    <div className="bg-surface border border-border rounded-2xl p-8">
+      <h2 className="text-2xl font-bold text-white mb-2 text-center">
+        {authMode === 'signup' ? 'Create account' : 'Welcome back'}
+      </h2>
+      <p className="text-text-secondary text-center mb-8 text-sm">
+        {authMode === 'signup' ? 'Start generating content today' : 'Sign in to your account'}
+      </p>
+
+      {authMode === 'signup' && (
+        <input
+          type="text"
+          placeholder="Your name"
+          value={authData.name}
+          onChange={(e) => setAuthData({...authData, name: e.target.value})}
+          className="w-full bg-dark border border-border rounded-xl px-4 py-3 
+            text-white placeholder-text-secondary outline-none
+            focus:border-primary transition-all duration-300 mb-4"
+        />
+      )}
+
+      <input
+        type="email"
+        placeholder="Email address"
+        value={authData.email}
+        onChange={(e) => setAuthData({...authData, email: e.target.value})}
+        className="w-full bg-dark border border-border rounded-xl px-4 py-3 
+          text-white placeholder-text-secondary outline-none
+          focus:border-primary transition-all duration-300 mb-4"
+      />
+
+      <div className="relative mb-6">
+  <input
+    type={showPassword ? 'text' : 'password'}
+    placeholder="Password"
+    value={authData.password}
+    onChange={(e) => setAuthData({...authData, password: e.target.value})}
+    className="w-full bg-dark border border-border rounded-xl px-4 py-3 
+      text-white placeholder-text-secondary outline-none
+      focus:border-primary transition-all duration-300"
+  />
+  <button
+    onClick={() => setShowPassword(!showPassword)}
+    className="absolute right-4 top-3.5 text-text-secondary hover:text-white
+      transition-colors text-sm"
+  >
+    {showPassword ? 'Hide' : 'Show'}
+  </button>
+</div>
+
+      {authError && (
+        <p className="text-red-400 text-sm mb-4 text-center">{authError}</p>
+      )}
+
+      <button
+        onClick={handleAuth}
+        disabled={authLoading}
+        className="w-full bg-primary hover:bg-primary-light text-white 
+          font-semibold py-3 rounded-xl transition-all duration-300
+          hover:shadow-glow disabled:opacity-50 mb-4"
+      >
+        {authLoading ? 'Please wait...' : authMode === 'signup' ? 'Create account' : 'Sign in'}
+      </button>
+
+      <p className="text-text-secondary text-sm text-center">
+        {authMode === 'signup' ? 'Already have an account?' : "Don't have an account?"}
+        <button
+          onClick={() => setAuthMode(authMode === 'signup' ? 'signin' : 'signup')}
+          className="text-primary ml-1 hover:text-primary-light transition-colors"
+        >
+          {authMode === 'signup' ? 'Sign in' : 'Sign up'}
+        </button>
+      </p>
+    </div>
+  </div>
+) : (
+  <>
+
         {/* Input Section */}
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-white mb-4">
@@ -210,6 +335,8 @@ useEffect(() => {
       </div>
     ))}
   </div>
+)}
+</>
 )}
 </main>
 </div>
