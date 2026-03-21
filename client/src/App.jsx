@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 function App() {
   const [topic, setTopic] = useState('')
@@ -6,18 +6,35 @@ function App() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
   const [copied, setCopied] = useState('')
+  const [displayText, setDisplayText] = useState('')
+const fullText = 'Generate content instantly '
 
-  const parseContent = (text) => {
-const summaryMatch = text.match(/SUMMARY:\n([\s\S]*?)(?=SOCIAL_POST:|$)/);
-const socialMatch = text.match(/SOCIAL_POST:\n([\s\S]*?)(?=SEO_DESCRIPTION:|$)/);
-const seoMatch = text.match(/SEO_DESCRIPTION:\n([\s\S]*?)$/);
+useEffect(() => {
+  let i = 0
+  const timer = setInterval(() => {
+    if (i < fullText.length) {
+      setDisplayText(fullText.slice(0, i + 1))
+      i++
+    } else {
+      clearInterval(timer)
+    }
+  }, 60)
+  return () => clearInterval(timer)
+}, [])
 
-return{
-  summary: summaryMatch ? summaryMatch[1].trim() : '',
-  social: socialMatch ? socialMatch[1].trim() : '',
-  seo: seoMatch ? seoMatch[1].trim() : ''
-};
+ const parseContent = (text) => {
+  const clean = (str) => str ? str.replace(/\*\*/g, '').trim() : '';
+  
+  const summaryMatch = text.match(/SUMMARY:\n([\s\S]*?)(?=SOCIAL_POST:|$)/);
+  const socialMatch = text.match(/SOCIAL_POST:\n([\s\S]*?)(?=SEO_DESCRIPTION:|$)/);
+  const seoMatch = text.match(/SEO_DESCRIPTION:\n([\s\S]*?)$/);
+
+  return {
+    summary: clean(summaryMatch ? summaryMatch[1] : ''),
+    social: clean(socialMatch ? socialMatch[1] : ''),
+    seo: clean(seoMatch ? seoMatch[1] : '')
   };
+};
   
   const handleGenerate = async () => {
     if (!topic.trim()) return
@@ -72,9 +89,14 @@ return{
         {/* Input Section */}
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-white mb-4">
-            Generate content
-            <span className="text-primary"> instantly</span>
-          </h2>
+  <span className="text-white">
+    {displayText.slice(0, 17)}
+  </span>
+  <span className="text-primary">
+    {displayText.slice(17)}
+  </span>
+  <span className="animate-pulse text-primary">|</span>
+</h2>
           <p className="text-text-secondary text-lg mb-12">
             Enter a topic and get a summary, social post, and SEO copy in seconds.
           </p>
@@ -109,6 +131,50 @@ return{
             {error}
           </div>
         )}
+        
+{/* Loading Skeleton */}
+{loading && (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+    {[1, 2, 3].map((i) => (
+      <div key={i} className="bg-surface border border-border rounded-2xl p-6">
+        <div className="h-4 bg-border rounded animate-pulse mb-4 w-1/2"></div>
+        <div className="space-y-3">
+          <div className="h-3 bg-border rounded animate-pulse"></div>
+          <div className="h-3 bg-border rounded animate-pulse w-5/6"></div>
+          <div className="h-3 bg-border rounded animate-pulse w-4/6"></div>
+          <div className="h-3 bg-border rounded animate-pulse w-5/6"></div>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
+        {/* Placeholder Cards */}
+{!result && !loading && (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+    {[
+      { label: 'Summary', icon: '📝', desc: 'A concise 3-sentence overview of your topic. Perfect for quick understanding.' },
+      { label: 'Social Post', icon: '📱', desc: 'An engaging post with hashtags ready to share on LinkedIn, Twitter, or Instagram.' },
+      { label: 'SEO Description', icon: '🔍', desc: 'A 150-word search-optimized description to rank higher on Google.' },
+    ].map(({ label, icon, desc }) => (
+      <div
+        key={label}
+        className="bg-surface border border-border rounded-2xl p-6
+          hover:border-primary/30 transition-all duration-300 opacity-60"
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <span>{icon}</span>
+          <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+            {label}
+          </span>
+        </div>
+        <p className="text-text-secondary leading-relaxed text-sm">
+          {desc}
+        </p>
+      </div>
+    ))}
+  </div>
+)}
 
         {/* Results */}
         {result && (
