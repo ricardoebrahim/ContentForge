@@ -112,6 +112,7 @@ function App() {
     setLoading(true)
     setError(null)
     setResult(null)
+    setCopied('')
     try {
       const response = await fetch('https://contentforge-production-cd34.up.railway.app/api/generate', {
         method: 'POST',
